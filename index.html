@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft: The Dark Depths</title>
+    <meta name="description" content="Explore dark caves with your wolf companion in this Minecraft-themed platformer adventure. Make difficult choices and sacrifices to save the world from ancient evil.">
+    <meta name="keywords" content="minecraft, platformer, adventure, pixel art, indie game">
+    <meta name="author" content="Your Name">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjMEY0NjBGIi8+CjxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iIzU1RkY1NSIvPgo8cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIGZpbGw9IiM4QjQ1MTMiLz4KPC9zdmc+">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: 
+                radial-gradient(circle at 80% 20%, rgba(135, 206, 235, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(34, 139, 34, 0.2) 0%, transparent 50%),
+                linear-gradient(180deg, #1a1a2e 0%, #16213e 30%, #0f3460 70%, #0a2647 100%);
+            font-family: 'VT323', monospace;
+            overflow: hidden;
+            color: #ffffff;
+            image-rendering: pixelated;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            min-height: 600px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.1), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.05), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.1), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.05), transparent);
+            background-repeat: repeat;
+            background-size: 160px 120px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Pixelated Moon */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 10%;
+            right: 15%;
+            width: 96px;
+            height: 96px;
+            background: 
+                /* Moon craters */
+                radial-gradient(circle at 30% 30%, rgba(220, 220, 180, 0.6) 8px, transparent 12px),
+                radial-gradient(circle at 70% 60%, rgba(220, 220, 180, 0.4) 6px, transparent 8px),
+                radial-gradient(circle at 50% 80%, rgba(220, 220, 180, 0.5) 4px, transparent 6px),
+                /* Pixelated texture */
+                repeating-linear-gradient(0deg, transparent 0px, transparent 8px, #f5f5dc 8px, #f5f5dc 16px),
+                repeating-linear-gradient(90deg, transparent 0px, transparent 8px, #f5f5dc 8px, #f5f5dc 16px),
+                /* Base moon color */
+                linear-gradient(135deg, #f5f5dc 0%, #e6e6cd 50%, #f5f5dc 100%);
+            background-size: 96px 96px, 96px 96px, 96px 96px, 8px 8px, 8px 8px, 96px 96px;
+            border-radius: 50%;
+            image-rendering: pixelated;
+            box-shadow: 
+                0 0 40px rgba(245, 245, 220, 0.4),
+                inset -10px -10px 20px rgba(0, 0, 0, 0.1);
+            animation: moonGlow 6s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        @keyframes moonGlow {
+            0% { 
+                box-shadow: 
+                    0 0 40px rgba(245, 245, 220, 0.4),
+                    inset -10px -10px 20px rgba(0, 0, 0, 0.1);
+                opacity: 0.9;
+                transform: scale(1);
+            }
+            100% { 
+                box-shadow: 
+                    0 0 60px rgba(245, 245, 220, 0.7),
+                    0 0 100px rgba(245, 245, 220, 0.3),
+                    inset -10px -10px 20px rgba(0, 0, 0, 0.1);
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        /* Floating particles animation */
+        .floating-particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: rgba(135, 206, 235, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 3;
+            animation: float 8s infinite linear;
+        }
+
+        .floating-particle:nth-child(2n) {
+            background: rgba(34, 139, 34, 0.4);
+            animation-duration: 12s;
+        }
+
+        .floating-particle:nth-child(3n) {
+            background: rgba(255, 255, 255, 0.3);
+            animation-duration: 10s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-20px) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        #gameContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+        
+        #gameCanvas {
+            border: 6px solid #8B4513;
+            border-radius: 0px;
+            box-shadow: 
+                inset 0 0 0 3px #D2691E,
+                0 0 40px rgba(139, 69, 19, 0.6),
+                0 0 0 2px rgba(255, 255, 255, 0.1);
+            background: #000;
+            image-rendering: pixelated;
+        }
+
+        #gameCanvas::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(139, 69, 19, 0.4) 0px,
+                    rgba(139, 69, 19, 0.4) 2px,
+                    transparent 2px,
+                    transparent 4px
+                );
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        #gameTitle {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 2rem;
+            color: #55FF55;
+            text-shadow: 2px 2px 0px #000000;
+            margin-bottom: 10px;
+        }
+        
+        #gameSubtitle {
+            font-size: 1rem;
+            color: #FFFF55;
+            text-shadow: 2px 2px 0px #000000;
+            margin-bottom: 20px;
+            font-family: 'Press Start 2P', monospace;
+        }
+        
+        #gameUI {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 20;
+            background: 
+                linear-gradient(135deg, rgba(139, 69, 19, 0.9) 0%, rgba(101, 67, 33, 0.9) 100%);
+            padding: 20px;
+            border: 4px solid #8B4513;
+            border-radius: 0;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            box-shadow: 
+                inset 0 0 0 2px #D2691E,
+                0 0 20px rgba(139, 69, 19, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            image-rendering: pixelated;
+        }
+
+        #gameUI::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: 
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(139, 69, 19, 0.3) 0px,
+                    rgba(139, 69, 19, 0.3) 2px,
+                    transparent 2px,
+                    transparent 4px
+                );
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        #healthBar {
+            width: 200px;
+            height: 24px;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    #2d2d2d 0px,
+                    #2d2d2d 4px,
+                    #1a1a1a 4px,
+                    #1a1a1a 8px
+                );
+            border: 3px solid #8B4513;
+            overflow: hidden;
+            margin-bottom: 10px;
+            image-rendering: pixelated;
+            box-shadow: inset 0 0 0 1px #654321, 0 0 10px rgba(139, 69, 19, 0.3);
+        }
+
+        #healthFill {
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    #32CD32 0px,
+                    #32CD32 4px,
+                    #228B22 4px,
+                    #228B22 8px
+                );
+            width: 100%;
+            transition: width 0.3s ease;
+            image-rendering: pixelated;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        }
+
+        #companionBar {
+            width: 200px;
+            height: 24px;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    #2d2d2d 0px,
+                    #2d2d2d 4px,
+                    #1a1a1a 4px,
+                    #1a1a1a 8px
+                );
+            border: 3px solid #8B4513;
+            overflow: hidden;
+            image-rendering: pixelated;
+            box-shadow: inset 0 0 0 1px #654321, 0 0 10px rgba(139, 69, 19, 0.3);
+        }
+
+        #companionFill {
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    #00FF7F 0px,
+                    #00FF7F 4px,
+                    #00CD66 4px,
+                    #00CD66 8px
+                );
+            width: 100%;
+            transition: width 0.3s ease;
+            image-rendering: pixelated;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        }
+        
+        #dialogue {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: 
+                linear-gradient(135deg, rgba(101, 67, 33, 0.95) 0%, rgba(139, 69, 19, 0.95) 100%);
+            padding: 25px;
+            border: 4px solid #8B4513;
+            border-radius: 0;
+            max-width: 650px;
+            display: none;
+            z-index: 30;
+            font-family: 'VT323', monospace;
+            box-shadow: 
+                inset 0 0 0 2px #D2691E,
+                0 0 30px rgba(139, 69, 19, 0.7),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            image-rendering: pixelated;
+        }
+
+        #dialogue::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: 
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(139, 69, 19, 0.2) 0px,
+                    rgba(139, 69, 19, 0.2) 3px,
+                    transparent 3px,
+                    transparent 6px
+                );
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        #dialogueText {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        #dialogueChoices {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .choice-button {
+            padding: 12px 24px;
+            background: 
+                linear-gradient(135deg, #228B22 0%, #32CD32 50%, #228B22 100%);
+            border: 3px solid #8B4513;
+            border-radius: 0;
+            color: white;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 0px #000000;
+            box-shadow: 
+                inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+                0 0 10px rgba(34, 139, 34, 0.3);
+            image-rendering: pixelated;
+            position: relative;
+        }
+
+        .choice-button::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(34, 139, 34, 0.3) 0px,
+                    rgba(34, 139, 34, 0.3) 2px,
+                    transparent 2px,
+                    transparent 4px
+                );
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .choice-button:hover {
+            background: 
+                linear-gradient(135deg, #32CD32 0%, #00FF00 50%, #32CD32 100%);
+            border-color: #D2691E;
+            transform: translateY(-2px);
+            box-shadow: 
+                inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+                0 0 20px rgba(50, 205, 50, 0.6),
+                0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .choice-button:hover::before {
+            opacity: 1;
+        }
+        
+        #instructions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: 
+                linear-gradient(135deg, rgba(34, 139, 34, 0.9) 0%, rgba(0, 100, 0, 0.9) 100%);
+            padding: 20px;
+            border: 4px solid #228B22;
+            border-radius: 0;
+            font-size: 16px;
+            max-width: 220px;
+            font-family: 'VT323', monospace;
+            box-shadow: 
+                inset 0 0 0 2px #32CD32,
+                0 0 20px rgba(34, 139, 34, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            image-rendering: pixelated;
+            z-index: 20;
+        }
+
+        #instructions::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: 
+                repeating-linear-gradient(
+                    -45deg,
+                    rgba(34, 139, 34, 0.3) 0px,
+                    rgba(34, 139, 34, 0.3) 2px,
+                    transparent 2px,
+                    transparent 4px
+                );
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: #55FF55;
+            font-family: 'Press Start 2P', monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles for atmosphere -->
+    <div class="floating-particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="floating-particle" style="left: 20%; animation-delay: 2s;"></div>
+    <div class="floating-particle" style="left: 30%; animation-delay: 4s;"></div>
+    <div class="floating-particle" style="left: 40%; animation-delay: 1s;"></div>
+    <div class="floating-particle" style="left: 50%; animation-delay: 3s;"></div>
+    <div class="floating-particle" style="left: 60%; animation-delay: 5s;"></div>
+    <div class="floating-particle" style="left: 70%; animation-delay: 2.5s;"></div>
+    <div class="floating-particle" style="left: 80%; animation-delay: 4.5s;"></div>
+    <div class="floating-particle" style="left: 90%; animation-delay: 1.5s;"></div>
+
+    <div id="gameContainer">
+        <h1 id="gameTitle">MINECRAFT: THE DARK DEPTHS</h1>
+        <p id="gameSubtitle">"Explore the caves below..."</p>
+        
+        <canvas id="gameCanvas" width="1024" height="576"></canvas>
+        
+        <div id="gameUI">
+            <div>Health</div>
+            <div id="healthBar">
+                <div id="healthFill"></div>
+            </div>
+            <div>Pet Wolf</div>
+            <div id="companionBar">
+                <div id="companionFill"></div>
+            </div>
+        </div>
+        
+        <div id="instructions">
+            <strong>Controls:</strong><br>
+            WASD/Arrow Keys - Move<br>
+            SPACE - Jump<br>
+            E - Interact<br>
+        </div>
+        
+        <div id="dialogue">
+            <div id="dialogueText"></div>
+            <div id="dialogueChoices"></div>
+        </div>
+        
+        <div class="loading" id="loadingText">Generating world...</div>
+    </div>
+    
+    <script src="audio.js"></script>
+    <script src="game.js"></script>
+    
+    <!-- Game start overlay -->
+    <div id="startScreen" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 70% 30%, rgba(34, 139, 34, 0.4) 0%, transparent 50%),
+            radial-gradient(circle at 30% 70%, rgba(139, 69, 19, 0.3) 0%, transparent 50%),
+            linear-gradient(180deg, #1a1a2e 0%, #16213e 30%, #0f3460 70%, #0a2647 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        color: #e8e8e8;
+        text-align: center;
+    ">
+        <h1 style="font-family: 'Press Start 2P', monospace; font-size: 2.5rem; color: #55FF55; margin-bottom: 20px; text-shadow: 2px 2px 0px #000000;">
+            MINECRAFT: THE DARK DEPTHS
+        </h1>
+        <p style="font-size: 1rem; margin-bottom: 30px; color: #FFFF55; font-family: 'Press Start 2P', monospace;">
+            "The caves are calling..."
+        </p>
+        <p style="max-width: 600px; line-height: 1.6; margin-bottom: 40px; font-size: 18px; font-family: 'VT323', monospace;">
+            Deep beneath the blocky surface, dark creatures lurk in the shadows. Armed with your trusty pickaxe and accompanied by your loyal wolf companion, venture into the dangerous caverns to find the legendary Diamond of Light before the darkness consumes everything.
+        </p>
+        <button id="startButton" style="
+            padding: 18px 45px;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #228B22 0%, #32CD32 50%, #228B22 100%);
+            border: 4px solid #8B4513;
+            border-radius: 0;
+            color: white;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            transition: all 0.3s ease;
+            text-shadow: 2px 2px 0px #000000;
+            box-shadow: 
+                inset 0 0 0 2px rgba(255, 255, 255, 0.2),
+                0 0 20px rgba(34, 139, 34, 0.4),
+                0 4px 8px rgba(0, 0, 0, 0.3);
+            image-rendering: pixelated;
+            position: relative;
+        " onmouseover="
+            this.style.background='linear-gradient(135deg, #32CD32 0%, #00FF00 50%, #32CD32 100%)'; 
+            this.style.borderColor='#D2691E';
+            this.style.transform='translateY(-3px)';
+            this.style.boxShadow='inset 0 0 0 2px rgba(255, 255, 255, 0.4), 0 0 30px rgba(50, 205, 50, 0.7), 0 6px 12px rgba(0, 0, 0, 0.4)';
+        " 
+           onmouseout="
+            this.style.background='linear-gradient(135deg, #228B22 0%, #32CD32 50%, #228B22 100%)'; 
+            this.style.borderColor='#8B4513';
+            this.style.transform='translateY(0px)';
+            this.style.boxShadow='inset 0 0 0 2px rgba(255, 255, 255, 0.2), 0 0 20px rgba(34, 139, 34, 0.4), 0 4px 8px rgba(0, 0, 0, 0.3)';
+        ">
+            START MINING
+        </button>
+        <p style="margin-top: 20px; font-size: 16px; opacity: 0.8; font-family: 'VT323', monospace;">
+            Use WASD/Arrow Keys to move, SPACE to jump
+        </p>
+    </div>
+</body>
+</html>
